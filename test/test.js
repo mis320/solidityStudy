@@ -1,5 +1,2 @@
-console.log(66);
-
-
 
 
