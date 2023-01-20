@@ -86,14 +86,20 @@ function randomNumber(conut) {
   return str + conut
 }
 let conut = 0
-while (true) {
-  let random = randomNumber(String(conut))
-  let addtress = getCreat2Address("0xd8b934580fcE35a11B58C6D73aDeE468a2833fa8", "0x11dafecf3bfeda557cc86931a570a034698ab9a2d1babfc7b7cadc75e0ac3ac1", random)
+function start() {
+  console.log(1);
+  while (true) {
+    let random = randomNumber(String(conut))
+    let addtress = getCreat2Address("0x8EC195ee65b95741490F9B682667Ce503C0cA4D9", "0x11dafecf3bfeda557cc86931a570a034698ab9a2d1babfc7b7cadc75e0ac3ac1", random)
 
-  if (addtress.slice(2,5) == "000") {
-    console.log(addtress);
-    fs.appendFileSync(__dirname + "/keys.txt", random + "----" + addtress + "\n")
-    break
+    if (addtress.slice(2, 12) == "0000000000") {
+      console.log(addtress);
+      fs.appendFileSync(__dirname + "/keys.txt", random + "----" + addtress + "\n")
+      break
+    }
+    conut++
   }
-  conut++
 }
+
+  start()
+
