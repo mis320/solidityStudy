@@ -101,5 +101,5 @@ function start() {
   }
 }
 
-  start()
+start()
 
