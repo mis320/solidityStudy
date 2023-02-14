@@ -1,4 +1,9 @@
-node_modules
+// .gitignore文件
+
+node_modules/
+dist/
+
+
 .env
 coverage
 coverage.json
