@@ -101,5 +101,8 @@ function start() {
   }
 }
 
-start()
+//start()
+
+let addtress = getCreat2Address("0xAbBb00C93C1cdD2E62e0b9d318a34f0fE07a72A1", "0x75d7e63357fe6e23bf0a7fbe6bfd6637d8e115828d590c44139b1559537d3a0f", 101)
+console.log(addtress);
 
