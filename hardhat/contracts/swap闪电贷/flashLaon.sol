@@ -62,7 +62,12 @@ contract FlashLoan {
         _;
     }
     
-   
+    function swap(uint256 _loanAmount) public{
+        loanAmount = _loanAmount;
+        IPancakePair PancakePair  = IPancakePair(uniPair);
+       (uint amount0Out, uint amount1Out) = jkToken != PancakePair.token0() ? (uint(0), _loanAmount) : (_loanAmount, uint(0));
+        PancakePair.swap(amount0Out,amount1Out,address(this),_calldata);
+    }
  
     function deposit()public payable{
      
@@ -109,10 +114,5 @@ contract FlashLoan {
     }
     
     
-    function swap(uint256 _loanAmount) public{
-        loanAmount = _loanAmount;
-        IPancakePair PancakePair  = IPancakePair(uniPair);
-       (uint amount0Out, uint amount1Out) = jkToken != PancakePair.token0() ? (uint(0), _loanAmount) : (_loanAmount, uint(0));
-        PancakePair.swap(amount0Out,amount1Out,address(this),_calldata);
-    }
+   
 }
