@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bscTest chat</title>
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+
+        .chat-container {
+            width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .chat-header {
+            height: 60px;
+            background-color: #fff;
+            border-bottom: 1px solid #e6e6e6;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .chat-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .chat-history {
+            height: 600px;
+            overflow: auto;
+            padding: 20px;
+        }
+
+        .chat-message {
+            display: flex;
+            margin-bottom: 20px;
+            width: 65%;
+            flex-direction: column;
+        }
+
+        .chat-message .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chat-message .message {
+            background-color: #f1f0f0;
+            border-radius: 10px;
+            padding: 10px;
+            flex: 1;
+        }
+
+        .chat-message .message p {
+            margin: 0;
+            font-size: 16px;
+            line-height: 24px;
+            color: #333;
+        }
+
+        .chat-input {
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #e6e6e6;
+            padding: 20px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            height: 40px;
+            border-radius: 20px;
+            border: none;
+            padding: 0 20px;
+            font-size: 16px;
+        }
+
+        .chat-input button {
+            width: 80px;
+            height: 40px;
+            background-color: #007aff;
+            color: #fff;
+            border-radius: 20px;
+            border: none;
+            font-size: 16px;
+            margin-left: 20px;
+            cursor: pointer;
+        }
+
+        .chat-input button:hover {
+            background-color: #0060d1;
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>BSCTest Chat DApp</h2>
+        </div>
+        <div class="chat-history" id="chat-history">
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type your message here" id="message-input">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+
+    <script>
+        // 部署 Chat 合约后，请修改以下内容
+
+        const chatAddress = "0x63b97c4e9C6A7A27770d95BE4e518A047e9f9cc9";
+        const chatAbi = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_content",
+                        "type": "string"
+                    }
+                ],
+                "name": "sendMessage",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "getMessage",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getMessageCount",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "messages",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "sender",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "content",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ]
+
+        // 使用 Web3 Provider 连接到以太坊网络
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+        // 使用 Chat 合约地址和 ABI 连接到 Chat 合约
+
+
+        // 发送消息
+        async function sendMessage() {
+            const signer = provider.getSigner()
+            const chatContract = new ethers.Contract(chatAddress, chatAbi, signer);
+
+            const message = document.getElementById("message-input").value;
+            const tx = await chatContract.sendMessage(message);
+            await tx.wait();
+            refreshChatHistory();
+        }
+
+        // 刷新聊天记录
+        async function refreshChatHistory() {
+            const chatContract = new ethers.Contract(chatAddress, chatAbi, provider);
+            const chatHistoryDiv = document.getElementById("chat-history");
+            chatHistoryDiv.innerHTML = "";
+            const messageCount = await chatContract.getMessageCount();
+            for (let i = 0; i < messageCount; i++) {
+                const message = await chatContract.messages(i);
+                console.log(message);
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "chat-message";
+                const avatarDiv = document.createElement("div");
+                avatarDiv.className = "avatar";
+                const messageaccount = document.createElement("p");
+                messageaccount.textContent = message.sender
+
+                avatarDiv.appendChild(messageaccount);
+                const messageContentDiv = document.createElement("div");
+                messageContentDiv.className = "message";
+                const messageText = document.createElement("p");
+                messageText.textContent = message.content
+                messageContentDiv.appendChild(messageText);
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(messageContentDiv);
+                chatHistoryDiv.appendChild(messageDiv);
+            }
+            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+        }
+
+        // 初始化聊天界面
+        async function initChat() {
+            await window.ethereum.enable();
+            await refreshChatHistory();
+        }
+
+        initChat();
+    </script>
+</body>
+
+</html>
