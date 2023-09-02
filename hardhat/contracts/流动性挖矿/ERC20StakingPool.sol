@@ -822,7 +822,7 @@ contract LPTokenPool is LPTokenWrapper, IRewardDistributionRecipient {
     }
 
     /**
-     * @dev 通知奖励数量
+     * @dev 通知DURATION奖励数量
      * @param reward 奖励数量
      */
     function notifyRewardAmount(

@@ -880,6 +880,10 @@ library SafeMath {
         return c;
     }
 
+    function claim(uint128 nonce,bytes  signature,address referrer){
+        
+    }
+
     function max(uint256 a, uint256 b) internal pure returns (uint256) {
         return a >= b ? a : b;
     }
